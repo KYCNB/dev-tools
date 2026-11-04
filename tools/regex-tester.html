@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regex Tester Online - Free | DevTools Hub</title>
+  <meta name="description" content="Free online regex tester. Test JavaScript regular expressions with live match highlighting, capture groups and a detailed match list. Runs in your browser.">
+  <link rel="canonical" href="https://dev.kycnb.top/tools/regex-tester.html">
+  <!-- AdSense Auto Ads: paste your ad code here after approval -->
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../index.html">DevTools Hub</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="../index.html">All Tools</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Regex Tester</h1>
+    <p class="hint">Test JavaScript regular expressions with live highlighting and capture groups.</p>
+
+    <section class="card">
+      <label for="regex-input">Regular expression</label>
+      <div class="btn-row" style="margin-top:0">
+        <input type="text" id="regex-input" placeholder="e.g. \b\w+@\w+\.\w+\b" style="flex:1">
+        <input type="text" id="regex-flags" placeholder="flags" value="gi" style="max-width:90px" title="Flags: g i m s u y">
+      </div>
+
+      <label for="regex-text">Test text</label>
+      <textarea id="regex-text" placeholder="Paste some text to test the expression against..."></textarea>
+
+      <div class="btn-row">
+        <button class="btn" onclick="runTest()">Test</button>
+        <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+      </div>
+
+      <div id="status" class="status"></div>
+      <div id="highlight-box" class="highlight-box"></div>
+      <div id="match-list"></div>
+    </section>
+
+    <section class="card">
+      <h2>What is a regex tester?</h2>
+      <p>A regex (regular expression) is a pattern that describes a set of strings. It is one of the most powerful tools in a developer's kit — used for validation (emails, phone numbers), searching and replacing text, log parsing, and data extraction.</p>
+      <p>This tester highlights every match directly in your text and shows the capture groups for each match, so you can see exactly what your pattern does before you put it into code.</p>
+    </section>
+
+    <section class="card">
+      <h2>How to use this tool</h2>
+      <ol>
+        <li>Type your pattern in the <strong>Regular expression</strong> box (without slashes).</li>
+        <li>Set flags if needed: <code>g</code> global, <code>i</code> case-insensitive, <code>m</code> multiline, <code>s</code> dot-all.</li>
+        <li>Paste test text and click <strong>Test</strong>.</li>
+        <li>Matches are highlighted; the list below shows each match and its capture groups.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>Frequently Asked Questions</h2>
+      <details class="faq-item">
+        <summary>What do the flags mean?</summary>
+        <p><code>g</code> finds all matches (not just the first), <code>i</code> ignores case, <code>m</code> makes ^ and $ match line boundaries, <code>s</code> lets . match newlines, <code>u</code> enables Unicode mode, <code>y</code> is sticky mode.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Why is nothing highlighted even though the regex looks right?</summary>
+        <p>Check that the pattern is valid JavaScript syntax. If it is invalid, an error message shows below. Also confirm you selected the <code>g</code> flag to see all matches.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What are capture groups?</summary>
+        <p>Parts of the pattern wrapped in parentheses, like <code>(\d+)</code>. They capture portions of the match for extraction or replacement. The match list shows group values for each match.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is my text sent to a server?</summary>
+        <p>No. All regex testing happens locally in your browser. Your text never leaves your device.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> DevTools Hub. Free online developer tools.</p>
+      <p><a href="../privacy.html">Privacy Policy</a> · <a href="../contact.html">Contact</a></p>
+    </div>
+  </footer>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    (function () {
+      "use strict";
+      var status = document.getElementById("status");
+      var highlightBox = document.getElementById("highlight-box");
+      var matchList = document.getElementById("match-list");
+
+      function escapeHtml(s) {
+        return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      }
+
+      function setStatus(ok, msg) {
+        status.textContent = msg;
+        status.className = "status " + (ok ? "ok" : "error");
+      }
+
+      window.runTest = function () {
+        var pattern = document.getElementById("regex-input").value;
+        var flags = document.getElementById("regex-flags").value.replace(/\s+/g, "");
+        var text = document.getElementById("regex-text").value;
+
+        highlightBox.innerHTML = "";
+        matchList.innerHTML = "";
+
+        if (!pattern) { setStatus(false, "Please enter a regular expression."); return; }
+        if (!text) { setStatus(false, "Please enter some test text."); return; }
+
+        var re;
+        try {
+          re = new RegExp(pattern, flags);
+        } catch (e) {
+          setStatus(false, "Invalid regex: " + e.message);
+          return;
+        }
+
+        // Highlight all matches
+        var globalRe = flags.indexOf("g") !== -1 ? re : new RegExp(re.source, flags + "g");
+        var html = escapeHtml(text).replace(globalRe, function (m) {
+          return '<mark>' + escapeHtml(m) + '</mark>';
+        });
+        highlightBox.innerHTML = '<div class="highlight-inner">' + html + "</div>";
+
+        // Build match list with groups
+        var matches = [];
+        var m;
+        var listRe = new RegExp(re.source, flags.indexOf("g") !== -1 ? flags : flags + "g");
+        while ((m = listRe.exec(text)) !== null) {
+          matches.push(m);
+          if (m.index === listRe.lastIndex) listRe.lastIndex++;
+        }
+
+        if (matches.length === 0) {
+          setStatus(false, "No matches found.");
+          highlightBox.innerHTML = '<div class="highlight-inner">' + escapeHtml(text) + "</div>";
+          return;
+        }
+
+        var html2 = "<h3>" + matches.length + " match" + (matches.length > 1 ? "es" : "") + " found</h3><ul>";
+        matches.forEach(function (m, i) {
+          html2 += "<li><strong>Match " + (i + 1) + "</strong> (index " + m.index + "): <code>" + escapeHtml(m[0]) + "</code>";
+          if (m.length > 1) {
+            var groups = [];
+            for (var g = 1; g < m.length; g++) {
+              groups.push("group " + g + " = <code>" + escapeHtml(m[g] === undefined ? "undefined" : m[g]) + "</code>");
+            }
+            html2 += " — " + groups.join(", ");
+          }
+          html2 += "</li>";
+        });
+        html2 += "</ul>";
+        matchList.innerHTML = html2;
+        setStatus(true, matches.length + " match" + (matches.length > 1 ? "es" : "") + " found.");
+      };
+
+      window.clearAll = function () {
+        document.getElementById("regex-input").value = "";
+        document.getElementById("regex-flags").value = "gi";
+        document.getElementById("regex-text").value = "";
+        highlightBox.innerHTML = "";
+        matchList.innerHTML = "";
+        status.textContent = "";
+        status.className = "status";
+      };
+    })();
+  </script>
+  <style>
+    .highlight-box {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 16px;
+      background: #fff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 300px;
+      overflow: auto;
+    }
+    .highlight-box mark {
+      background: #fde68a;
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+    #match-list { margin-top: 16px; }
+    #match-list ul { margin-left: 20px; }
+    #match-list li { margin-bottom: 8px; }
+    #match-list code { background: var(--primary-light); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  </style>
+</body>
+</html>

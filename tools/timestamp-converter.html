@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unix Timestamp Converter Online - Free | DevTools Hub</title>
+  <meta name="description" content="Free online Unix timestamp converter. Convert timestamp to date and date to timestamp instantly, in seconds and milliseconds. Runs in your browser.">
+  <link rel="canonical" href="https://dev.kycnb.top/tools/timestamp-converter.html">
+  <!-- AdSense Auto Ads: paste your ad code here after approval -->
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../index.html">DevTools Hub</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="../index.html">All Tools</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Unix Timestamp Converter</h1>
+    <p class="hint">Convert between Unix timestamps and readable dates in both directions.</p>
+
+    <section class="card">
+      <h2>Timestamp to Date</h2>
+      <label for="ts-input">Timestamp (seconds or milliseconds)</label>
+      <div class="btn-row" style="margin-top:0">
+        <input type="text" id="ts-input" placeholder="e.g. 1700000000" style="flex:1">
+        <button class="btn" onclick="tsToDate()">Convert</button>
+      </div>
+      <div id="ts-result"></div>
+    </section>
+
+    <section class="card">
+      <h2>Date to Timestamp</h2>
+      <label for="dt-input">Date and time (your local timezone)</label>
+      <div class="btn-row" style="margin-top:0">
+        <input type="datetime-local" id="dt-input">
+        <button class="btn" onclick="dtToTs()">Convert</button>
+        <button class="btn btn-secondary" onclick="useNow()">Use Now</button>
+      </div>
+      <div id="dt-result"></div>
+    </section>
+
+    <section class="card">
+      <h2>What is a Unix timestamp?</h2>
+      <p>A Unix timestamp is the number of seconds (or milliseconds) that have elapsed since January 1, 1970 at 00:00:00 UTC (the Unix Epoch). It is the standard way computers store and exchange dates because it is timezone-independent and easy to compare.</p>
+      <p>Developers constantly need to convert timestamps from logs, databases and APIs into readable dates — or turn user-picked dates into timestamps for storage. This tool does both instantly, entirely in your browser.</p>
+    </section>
+
+    <section class="card">
+      <h2>How to use this tool</h2>
+      <ol>
+        <li><strong>Timestamp to Date:</strong> paste a timestamp (it detects seconds vs milliseconds automatically) and click Convert.</li>
+        <li><strong>Date to Timestamp:</strong> pick a date and time in your local timezone, then click Convert. You get both seconds and milliseconds.</li>
+        <li>Click <strong>Use Now</strong> to insert the current moment and see its timestamp.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>Frequently Asked Questions</h2>
+      <details class="faq-item">
+        <summary>Seconds or milliseconds — how do I know which one I have?</summary>
+        <p>If the number has 10 digits, it is almost certainly seconds. 13 digits means milliseconds. This tool detects both automatically.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What timezone is the timestamp based on?</summary>
+        <p>Timestamps are always based on UTC. The readable date shown here is displayed in your browser's local timezone so it is easy to understand.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Why do I sometimes see a negative timestamp?</summary>
+        <p>Negative timestamps represent dates before January 1, 1970. They are valid and this tool handles them correctly.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is my data sent to a server?</summary>
+        <p>No. All conversions happen locally in your browser. Nothing is uploaded.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> DevTools Hub. Free online developer tools.</p>
+      <p><a href="../privacy.html">Privacy Policy</a> · <a href="../contact.html">Contact</a></p>
+    </div>
+  </footer>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    (function () {
+      "use strict";
+      var tsResult = document.getElementById("ts-result");
+      var dtResult = document.getElementById("dt-result");
+
+      function render(container, rows) {
+        if (!rows || rows.length === 0) { container.innerHTML = ""; return; }
+        var html = '<ul style="margin-top:12px">';
+        rows.forEach(function (r) { html += "<li><strong>" + r.label + ":</strong> " + r.value + "</li>"; });
+        html += "</ul>";
+        container.innerHTML = html;
+      }
+
+      window.tsToDate = function () {
+        var raw = document.getElementById("ts-input").value.trim();
+        if (!raw) { render(tsResult, [{ label: "Error", value: "Please enter a timestamp." }]); return; }
+        var num = Number(raw);
+        if (isNaN(num)) { render(tsResult, [{ label: "Error", value: "That does not look like a valid number." }]); return; }
+        var ms = Math.abs(num) < 1e12 ? num * 1000 : num; // 10-digit = seconds, 13-digit = ms
+        var d = new Date(ms);
+        if (isNaN(d.getTime())) { render(tsResult, [{ label: "Error", value: "Timestamp out of range." }]); return; }
+        render(tsResult, [
+          { label: "Local date & time", value: d.toString() },
+          { label: "UTC date & time", value: d.toUTCString() },
+          { label: "ISO 8601", value: d.toISOString() },
+          { label: "Detected unit", value: Math.abs(num) < 1e12 ? "seconds" : "milliseconds" }
+        ]);
+      };
+
+      window.dtToTs = function () {
+        var raw = document.getElementById("dt-input").value;
+        if (!raw) { render(dtResult, [{ label: "Error", value: "Please pick a date and time first." }]); return; }
+        var ms = new Date(raw).getTime();
+        if (isNaN(ms)) { render(dtResult, [{ label: "Error", value: "Invalid date." }]); return; }
+        render(dtResult, [
+          { label: "Timestamp (seconds)", value: Math.floor(ms / 1000).toString() },
+          { label: "Timestamp (milliseconds)", value: ms.toString() }
+        ]);
+      };
+
+      window.useNow = function () {
+        var now = new Date();
+        var local = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+        document.getElementById("dt-input").value = local;
+        dtToTs();
+      };
+    })();
+  </script>
+</body>
+</html>

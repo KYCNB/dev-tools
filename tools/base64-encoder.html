@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base64 Encoder &amp; Decoder Online - Free | DevTools Hub</title>
+  <meta name="description" content="Free online Base64 encoder and decoder. Encode text to Base64 or decode Base64 to text instantly in your browser with full UTF-8 support.">
+  <link rel="canonical" href="https://dev.kycnb.top/tools/base64-encoder.html">
+  <!-- AdSense Auto Ads: paste your ad code here after approval -->
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../index.html">DevTools Hub</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="../index.html">All Tools</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Base64 Encoder &amp; Decoder</h1>
+    <p class="hint">Encode text to Base64 or decode Base64 back to text. UTF-8 safe.</p>
+
+    <section class="card">
+      <label for="b64-input">Input</label>
+      <textarea id="b64-input" placeholder="Text to encode, or Base64 string to decode..."></textarea>
+
+      <div class="btn-row">
+        <button class="btn" onclick="doEncode()">Encode to Base64</button>
+        <button class="btn" onclick="doDecode()">Decode from Base64</button>
+        <button class="btn btn-secondary" data-copy-target="b64-output">Copy Result</button>
+        <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <label for="b64-output">Output</label>
+      <textarea id="b64-output" class="output" placeholder="Result appears here..."></textarea>
+    </section>
+
+    <section class="card">
+      <h2>What is Base64?</h2>
+      <p>Base64 is a binary-to-text encoding scheme that represents data using only 64 printable ASCII characters (A-Z, a-z, 0-9, + and /). It is widely used to safely transmit and store binary data in text-based formats — for example, embedding images in HTML or JSON, sending binary data in API payloads, and encoding authentication credentials.</p>
+      <p>This encoder/decoder fully supports Unicode (UTF-8), so emoji, Chinese characters and other non-ASCII text are handled correctly on both sides.</p>
+    </section>
+
+    <section class="card">
+      <h2>How to use this tool</h2>
+      <ol>
+        <li>Type or paste your text into the <strong>Input</strong> box.</li>
+        <li>Click <strong>Encode to Base64</strong> to convert text to Base64.</li>
+        <li>Or paste a Base64 string and click <strong>Decode from Base64</strong> to get the original text.</li>
+        <li>Click <strong>Copy Result</strong> to copy the output.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>Frequently Asked Questions</h2>
+      <details class="faq-item">
+        <summary>Why do emoji or Chinese characters get garbled when encoding?</summary>
+        <p>That happens with tools that only handle ASCII. This tool encodes UTF-8 properly, so emoji and non-Latin scripts work correctly.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Can I encode binary files with this tool?</summary>
+        <p>This tool works with text input. For encoding whole files (like images), most people use a dedicated file-to-Base64 converter.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What does the "=" padding at the end of Base64 mean?</summary>
+        <p>"=" characters are padding added so the encoded length is a multiple of 4. They carry no data and can often be removed when the length is already aligned.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is decoding done locally?</summary>
+        <p>Yes. All encoding and decoding happens in your browser. Nothing is uploaded to any server.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> DevTools Hub. Free online developer tools.</p>
+      <p><a href="../privacy.html">Privacy Policy</a> · <a href="../contact.html">Contact</a></p>
+    </div>
+  </footer>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    (function () {
+      "use strict";
+      var input = document.getElementById("b64-input");
+      var output = document.getElementById("b64-output");
+      var status = document.getElementById("status");
+
+      function setStatus(ok, msg) {
+        status.textContent = msg;
+        status.className = "status " + (ok ? "ok" : "error");
+      }
+
+      function utf8ToBase64(str) {
+        var bytes = new TextEncoder().encode(str);
+        var bin = "";
+        bytes.forEach(function (b) { bin += String.fromCharCode(b); });
+        return btoa(bin);
+      }
+
+      function base64ToUtf8(b64) {
+        var bin = atob(b64.replace(/\s+/g, ""));
+        var bytes = Uint8Array.from(bin, function (c) { return c.charCodeAt(0); });
+        return new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+      }
+
+      window.doEncode = function () {
+        var raw = input.value;
+        if (!raw) { setStatus(false, "Please enter some text to encode."); return; }
+        try {
+          output.value = utf8ToBase64(raw);
+          setStatus(true, "Encoded successfully.");
+        } catch (e) {
+          setStatus(false, "Encoding failed: " + e.message);
+        }
+      };
+
+      window.doDecode = function () {
+        var raw = input.value.replace(/\s+/g, "");
+        if (!raw) { setStatus(false, "Please paste a Base64 string to decode."); return; }
+        try {
+          output.value = base64ToUtf8(raw);
+          setStatus(true, "Decoded successfully.");
+        } catch (e) {
+          setStatus(false, "Invalid Base64 input. Please check the string.");
+        }
+      };
+
+      window.clearAll = function () {
+        input.value = "";
+        output.value = "";
+        status.textContent = "";
+        status.className = "status";
+        input.focus();
+      };
+    })();
+  </script>
+</body>
+</html>

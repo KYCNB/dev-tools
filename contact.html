@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | DevTools Hub</title>
+  <meta name="description" content="Contact the DevTools Hub team. Send feedback, tool suggestions or bug reports.">
+  <link rel="canonical" href="https://dev.kycnb.top/contact.html">
+  <!-- AdSense Auto Ads: paste your ad code here after approval -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">DevTools Hub</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="index.html">All Tools</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Contact Us</h1>
+
+    <section class="card">
+      <p>Have a question, a tool suggestion, or found a bug? We read every message and usually reply within a few days.</p>
+      <p>You can reach us directly by email at: <a href="mailto:contact@kycnb.top">contact@kycnb.top</a></p>
+    </section>
+
+    <section class="card">
+      <h2>Send us a message</h2>
+      <p>This form opens your email app with the message pre-filled. No data is sent to this website.</p>
+      <form id="contact-form">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" placeholder="e.g. Tool suggestion: XML formatter" required>
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Write your feedback, suggestion or bug report here..." required></textarea>
+
+        <div class="btn-row">
+          <button type="submit" class="btn">Send Email</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> DevTools Hub. Free online developer tools.</p>
+      <p><a href="privacy.html">Privacy Policy</a> · <a href="contact.html">Contact</a></p>
+    </div>
+  </footer>
+  <script src="assets/js/main.js"></script>
+  <script>
+    (function () {
+      var form = document.getElementById("contact-form");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var subject = document.getElementById("subject").value.trim();
+        var message = document.getElementById("message").value.trim();
+        if (!subject || !message) return;
+        var mailto = "mailto:contact@kycnb.top?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(message);
+        window.location.href = mailto;
+      });
+    })();
+  </script>
+</body>
+</html>

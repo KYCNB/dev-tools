@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UUID Generator Online - Free v4 UUIDs | DevTools Hub</title>
+  <meta name="description" content="Free online UUID v4 generator. Generate single or bulk random UUIDs instantly in your browser using cryptographically secure randomness.">
+  <link rel="canonical" href="https://dev.kycnb.top/tools/uuid-generator.html">
+  <!-- AdSense Auto Ads: paste your ad code here after approval -->
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../index.html">DevTools Hub</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="../index.html">All Tools</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>UUID Generator</h1>
+    <p class="hint">Generate version 4 (random) UUIDs. Cryptographically secure, runs locally.</p>
+
+    <section class="card">
+      <label for="uuid-count">How many UUIDs?</label>
+      <div class="btn-row" style="margin-top:0">
+        <input type="number" id="uuid-count" value="1" min="1" max="200" style="max-width:140px">
+        <button class="btn" onclick="generate()">Generate</button>
+        <button class="btn btn-secondary" data-copy-target="uuid-output">Copy All</button>
+        <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <label for="uuid-output">Generated UUIDs</label>
+      <textarea id="uuid-output" class="output" placeholder="Your UUIDs appear here, one per line..."></textarea>
+    </section>
+
+    <section class="card">
+      <h2>What is a UUID?</h2>
+      <p>A UUID (Universally Unique Identifier) is a 128-bit value formatted as five groups of hexadecimal digits, for example <code>f47ac10b-58cc-4372-a567-0e02b2c3d479</code>. UUIDs are used everywhere in software: database primary keys, API identifiers, session tokens, file names and distributed systems.</p>
+      <p>This tool generates <strong>version 4</strong> UUIDs, where the value is derived from cryptographically secure random numbers, making collisions practically impossible.</p>
+    </section>
+
+    <section class="card">
+      <h2>How to use this tool</h2>
+      <ol>
+        <li>Enter how many UUIDs you need (1 to 200).</li>
+        <li>Click <strong>Generate</strong> — UUIDs appear one per line.</li>
+        <li>Click <strong>Copy All</strong> to copy the full list to your clipboard.</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>Frequently Asked Questions</h2>
+      <details class="faq-item">
+        <summary>Can two generated UUIDs be the same?</summary>
+        <p>Practically impossible. A v4 UUID has 122 random bits, so the chance of collision is astronomically small even across billions of generated values.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Are these safe for use as security tokens?</summary>
+        <p>Yes. This tool uses the browser's crypto.getRandomValues, which is designed for security-sensitive use cases.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What does the "4" in the third group mean?</summary>
+        <p>It identifies the UUID version. Version 4 means the value is random. Version 1 (time-based) and other versions exist for different use cases.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Is generation done locally?</summary>
+        <p>Yes. UUIDs are generated in your browser and nothing is sent to any server.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> DevTools Hub. Free online developer tools.</p>
+      <p><a href="../privacy.html">Privacy Policy</a> · <a href="../contact.html">Contact</a></p>
+    </div>
+  </footer>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    (function () {
+      "use strict";
+      var output = document.getElementById("uuid-output");
+      var status = document.getElementById("status");
+
+      function uuidv4() {
+        if (crypto.randomUUID) return crypto.randomUUID();
+        var bytes = crypto.getRandomValues(new Uint8Array(16));
+        bytes[6] = (bytes[6] & 0x0f) | 0x40;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+        var hex = Array.from(bytes, function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+        return hex.slice(0, 8) + "-" + hex.slice(8, 12) + "-" + hex.slice(12, 16) + "-" + hex.slice(16, 20) + "-" + hex.slice(20);
+      }
+
+      window.generate = function () {
+        var n = parseInt(document.getElementById("uuid-count").value, 10);
+        if (!n || n < 1 || n > 200) {
+          status.textContent = "Please enter a number between 1 and 200.";
+          status.className = "status error";
+          return;
+        }
+        var lines = [];
+        for (var i = 0; i < n; i++) lines.push(uuidv4());
+        output.value = lines.join("\n");
+        status.textContent = "Generated " + n + " UUID" + (n > 1 ? "s" : "") + ".";
+        status.className = "status ok";
+      };
+
+      window.clearAll = function () {
+        output.value = "";
+        status.textContent = "";
+        status.className = "status";
+      };
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Formatter &amp; Validator Online - Free | DevTools Hub</title>
+  <meta name="description" content="Free online JSON formatter and validator. Format, minify and validate JSON instantly in your browser. No upload, no sign-up, 100% private.">
+  <link rel="canonical" href="https://dev.kycnb.top/tools/json-formatter.html">
+  <!-- AdSense Auto Ads: paste your ad code here after approval -->
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="../index.html">DevTools Hub</a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="../index.html">All Tools</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>JSON Formatter &amp; Validator</h1>
+    <p class="hint">Free, instant, runs 100% in your browser.</p>
+
+    <section class="card">
+      <label for="json-input">Your JSON</label>
+      <textarea id="json-input" placeholder='Paste your JSON here, e.g. {"name":"DevTools","free":true}'></textarea>
+
+      <div class="btn-row">
+        <button class="btn" onclick="doFormat(false)">Format</button>
+        <button class="btn btn-secondary" onclick="doFormat(true)">Minify</button>
+        <button class="btn btn-secondary" onclick="doValidate()">Validate</button>
+        <button class="btn btn-secondary" data-copy-target="json-output">Copy Result</button>
+        <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+      </div>
+
+      <div id="status" class="status"></div>
+
+      <label for="json-output">Result</label>
+      <textarea id="json-output" class="output" placeholder="Formatted or minified JSON appears here..."></textarea>
+    </section>
+
+    <section class="card">
+      <h2>What is a JSON Formatter?</h2>
+      <p>A JSON formatter takes raw, compressed or messy JSON text and turns it into a clean, indented, easy-to-read structure. It is one of the most used tools in every developer's workflow, whether you are debugging an API response, inspecting a config file, or preparing data for a colleague.</p>
+      <p>This tool also <strong>validates</strong> your JSON at the same time. If there is a syntax error — a missing comma, an unquoted key, or a trailing comma — it tells you exactly what went wrong, so you can fix it quickly.</p>
+    </section>
+
+    <section class="card">
+      <h2>How to use this tool</h2>
+      <ol>
+        <li>Paste or type your JSON into the <strong>Your JSON</strong> box.</li>
+        <li>Click <strong>Format</strong> to indent and beautify, or <strong>Minify</strong> to compress it into one line.</li>
+        <li>Click <strong>Validate</strong> if you only want to check whether your JSON is correct.</li>
+        <li>Use <strong>Copy Result</strong> to copy the output to your clipboard.</li>
+      </ol>
+      <p>Everything runs locally. Your data is never sent anywhere.</p>
+    </section>
+
+    <section class="card">
+      <h2>Frequently Asked Questions</h2>
+      <details class="faq-item">
+        <summary>Is my JSON uploaded to a server?</summary>
+        <p>No. The tool runs entirely in your browser with JavaScript. Your JSON never leaves your device.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Why does my JSON show as invalid?</summary>
+        <p>Common causes: trailing commas, single quotes instead of double quotes, unquoted keys, or comments inside JSON. The validator will point to the exact error location.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What is the difference between Format and Minify?</summary>
+        <p>Format adds indentation and line breaks to make JSON readable. Minify removes all whitespace to produce the smallest possible payload, which is useful for storage and transmission.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does it work with large JSON files?</summary>
+        <p>Yes, up to what your browser can comfortably handle. Because processing is local, very large files work better here than on server-based tools.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> DevTools Hub. Free online developer tools.</p>
+      <p><a href="../privacy.html">Privacy Policy</a> · <a href="../contact.html">Contact</a></p>
+    </div>
+  </footer>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    (function () {
+      "use strict";
+      var input = document.getElementById("json-input");
+      var output = document.getElementById("json-output");
+      var status = document.getElementById("status");
+
+      function setStatus(ok, msg) {
+        status.textContent = msg;
+        status.className = "status " + (ok ? "ok" : "error");
+      }
+
+      function parse() {
+        var raw = input.value;
+        if (!raw.trim()) { setStatus(false, "Please paste some JSON first."); return null; }
+        try {
+          return { value: JSON.parse(raw), raw: raw };
+        } catch (e) {
+          setStatus(false, "Invalid JSON: " + e.message);
+          return null;
+        }
+      }
+
+      window.doFormat = function (minify) {
+        var parsed = parse();
+        if (!parsed) return;
+        var out = minify ? JSON.stringify(parsed.value) : JSON.stringify(parsed.value, null, 2);
+        output.value = out;
+        setStatus(true, minify ? "JSON minified successfully (" + out.length + " characters)." : "JSON formatted successfully. Valid JSON.");
+      };
+
+      window.doValidate = function () {
+        var parsed = parse();
+        if (!parsed) return;
+        setStatus(true, "Valid JSON. The document parses without errors.");
+      };
+
+      window.clearAll = function () {
+        input.value = "";
+        output.value = "";
+        status.textContent = "";
+        status.className = "status";
+        input.focus();
+      };
+    })();
+  </script>
+</body>
+</html>
