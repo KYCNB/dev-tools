@@ -1,4 +1,1 @@
-# After your AdSense account is approved, replace the placeholder below with your real publisher ID.
-# Format: google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
-# Then redeploy. Do not keep this placeholder file as-is for long.
-google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+google.com, pub-4932711262775019, DIRECT, f08c47fec0942fa0
